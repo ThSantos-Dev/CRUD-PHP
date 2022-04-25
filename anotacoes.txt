@@ -1,0 +1,4 @@
+    MVC 
+M - Model (modelagem - conexao com BD, insert de dados, classes)
+V - View (Front-end - telas, forms, etc)
+C - Controller (meio de campo entre View e Model)
