@@ -11,54 +11,25 @@
 
 //  Função para receber dados da VIEW e encaminhar dados para a MODEL (inserir)
 function inserirContato($dadosContato, $file) {
+    $fileName = (string) 'img/user.png';
+
     // Validação para verificar se o objeto está vazio
     if(!empty($dadosContato)){
         // Validação de caixa vazia dos elementos Nome, Celular e Email, pois são obrigatórios no BD
         if(!empty($dadosContato['txtNome']) && !empty($dadosContato['txtCelular']) && !empty($dadosContato['txtEmail'])){
-            $fileNames = array();
-
+            // Validação para identificar se chegou um arquivo para upload
             if($file != null) {
+                // Import da função de upload
                 require_once('modulo/upload.php');
 
-                echo "<pre>"   ;  
-                print_r($file);
-                echo "</pre>"   ;  
-           
-                $total_count = count($_FILES['fileFoto']['name']);
-                for($i = 0; $i < $total_count; $i++) {
-                    // Recupera o Tamanho do arquivo
-                    $sizeFile = $_FILES['fileFoto']['size'][$i];
-
-                    // Recupera o Tipo do arquivo
-                    $typeFile = $_FILES['fileFoto']['type'][$i];
-            
-                    // Recupera o Nome do arquivo
-                    $nameFile = $_FILES['fileFoto']['name'][$i];
-            
-                    // Recupera o Caminho do arquivo temporário
-                    $tempFile = $_FILES['fileFoto']['tmp_name'][$i];
-
-                    $arquivo = array(
-                        "name" => $nameFile,
-                        "type" => $typeFile,
-                        "size" => $sizeFile,
-                        "tmp_name" => $tempFile
-                    );
-
-                    array_push($fileNames,  uploadFile($arquivo));
-
-                }
-
-                
-                echo "<pre>"   ;  
-                print_r($fileNames);
-                echo "</pre>"   ;  
-           
-
-                die;
+                // Chama a função de upload
+                $fileName = uploadFiles($file['fileFoto']);
 
                 if(is_array($fileName))
-                    return $fileName; 
+                // Caso ocorra erros no processo de upload, a função irá retornar um array com a possível mensagem de erro.
+                // Esse array será retornado para a Router que irá exibir na tela
+                    return $fileName;
+
             }
 
 
@@ -76,7 +47,7 @@ function inserirContato($dadosContato, $file) {
                 "telefone"  => $dadosContato['txtTelefone'],
                 "email"     => $dadosContato['txtEmail'],
                 "obs"       => $dadosContato['txtObs'],
-                "file"      => PATH_FILE_UPLOAD . $fileName
+                "fotos"      => $fileName
             );
 
             // Import do arquivo de modelagem para manipular o BD

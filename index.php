@@ -127,12 +127,14 @@ if (session_status()) {
                 <td class="tblColunas destaque"> Nome </td>
                 <td class="tblColunas destaque"> Celular </td>
                 <td class="tblColunas destaque"> Email </td>
+                <td class="tblColunas destaque"> Foto </td>
                 <td class="tblColunas destaque"> Opções </td>
             </tr>
 
             <?php
             //    Import do arquivo da controller para solicitar a listagem dos dados
             require_once('controllers/controllerContatos.php');
+            require_once('modulo/config.php');
             // Chama a função que vai retornar os dados de contatos 
             $listContato = listaContato();
 
@@ -145,6 +147,21 @@ if (session_status()) {
                     <td class="tblColunas registros"><?= $item['nome'] ?></td>
                     <td class="tblColunas registros"><?= $item['telefone'] ?></td>
                     <td class="tblColunas registros"><?= $item['email'] ?></td>
+                    <td class="tblColunas registros">
+                        <?php
+
+                            $fotos = explode(',' , $item['fotos']);
+
+                            if(count($fotos) > 0) {
+                                foreach($fotos as $foto) {
+                                    echo '<img class="foto" src="'.  PATH_FILE_UPLOAD . $foto .'" alt="test" />';
+                                }
+                            }
+                             else 
+                                echo '<img class="foto" src="'. $item['fotos'] ? PATH_FILE_UPLOAD . $foto : 'img/user.png'. '" alt="test" />'
+
+                        ?>
+                    </td>
 
                     <td class="tblColunas registros">
                         <a href="router.php?component=contatos&action=buscar&id=<?= $item['id'] ?>">

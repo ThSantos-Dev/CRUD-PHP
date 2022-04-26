@@ -10,6 +10,7 @@
 
 // Import do Arquivo que estabelece a conexão com o BD
 require_once('conexaoMySQL.php');
+require_once('modulo/config.php');
 
 
 // CRUD = CREATE, READ, UPDATE AND DELETE 
@@ -31,14 +32,16 @@ function insertContato($dadosContato)
             telefone,
             celular,
             email,
-            obs
+            obs,
+            fotos
         ) 
         values (
             '" . $dadosContato['nome'] . "',
             '" . $dadosContato['telefone'] . "',
             '" . $dadosContato['celular'] . "',
             '" . $dadosContato['email'] . "',
-            '" . $dadosContato['obs'] . "'
+            '" . $dadosContato['obs'] . "',
+            '" . $dadosContato['fotos'] ."'
         );";
 
     // echo '</br></br></br>Script SQL:</br>';
@@ -155,7 +158,8 @@ function selectAllContatos()
                 "telefone"  => $rsDados['telefone'],
                 "celular"   => $rsDados['celular'],
                 "email"     => $rsDados['email'],
-                "obs"       => $rsDados['obs']
+                "obs"       => $rsDados['obs'],
+                "fotos"       => $rsDados['fotos'] 
             );
             $cont++;
         }
