@@ -1,4 +1,5 @@
 <?php
+require_once('modulo/config.php');
 
 /**
  * Essa variável foi criada para diferenciar no action do formulario 
@@ -7,6 +8,9 @@
  * ação de editar.
  */
 $form = (string) 'router.php?component=contatos&action=inserir';
+
+// Variável para carregar o nome da fotodo banco de dados
+$foto = (string) null;
 
 // Valida se a utilização de variáveis de sessão esta ativa no servidor
 if (session_status()) {
@@ -18,9 +22,10 @@ if (session_status()) {
         $celular     = $_SESSION['dadosContato']['celular'];
         $email       = $_SESSION['dadosContato']['email'];
         $obs         = $_SESSION['dadosContato']['obs'];
+        $foto        = $_SESSION['dadosContato']['foto'];
 
         // Mudamos a ação do form para editar o registro no click do botão salvar
-        $form = 'router.php?component=contatos&action=editar&id=' . $id;
+        $form = 'router.php?component=contatos&action=editar&id=' . $id . '&foto=' . $foto ;
 
         // Destrói uma variável da memória do servidor
         unset($_SESSION['dadosContato']);
@@ -97,7 +102,7 @@ if (session_status()) {
                         <label> Escolha um arquivo: </label>
                     </div>
                     <div class="cadastroEntradaDeDados">
-                        <input type="file" name="fileFoto[]" multiple="multiple" accept=".jpg, .png, .gif, .svg">
+                        <input type="file" name="fileFoto" multiple="multiple" accept=".jpg, .png, .gif, .svg">
                     </div>
                 </div>
                 <div class="campos">
@@ -108,6 +113,11 @@ if (session_status()) {
                         <textarea name="txtObs" cols="50" rows="7"><?= isset($obs) ? $obs : null ?></textarea>
                     </div>
                 </div>
+
+                <div class="campos preview">
+                    <img src="<?=PATH_FILE_UPLOAD.$foto?>" alt="">
+                </div>
+
                 <div class="enviar">
                     <div class="enviar">
                         <input type="submit" name="btnEnviar" value="Salvar">
@@ -139,8 +149,9 @@ if (session_status()) {
             $listContato = listaContato();
 
             //    Estrutura de repetição para retornar os dados do array e printar na tela
-            foreach ($listContato as $item) {
-
+            if($listContato = listaContato()) {
+                foreach ($listContato as $item) {
+                    $foto = $item['foto'];
             ?>
 
                 <tr id="tblLinhas">
@@ -148,19 +159,7 @@ if (session_status()) {
                     <td class="tblColunas registros"><?= $item['telefone'] ?></td>
                     <td class="tblColunas registros"><?= $item['email'] ?></td>
                     <td class="tblColunas registros">
-                        <?php
-
-                            $fotos = explode(',' , $item['fotos']);
-
-                            if(count($fotos) > 0) {
-                                foreach($fotos as $foto) {
-                                    echo '<img class="foto" src="'.  PATH_FILE_UPLOAD . $foto .'" alt="test" />';
-                                }
-                            }
-                             else 
-                                echo '<img class="foto" src="'. $item['fotos'] ? PATH_FILE_UPLOAD . $foto : 'img/user.png'. '" alt="test" />'
-
-                        ?>
+                        <img src="<?=PATH_FILE_UPLOAD.$foto?>" alt="" class="tblImagens">
                     </td>
 
                     <td class="tblColunas registros">
@@ -169,7 +168,7 @@ if (session_status()) {
                         </a>
 
                         <!-- <img src="img/trash.png" alt="Excluir" title="Excluir" id="btnExlcuir" onclick="deleteContato(<?= $item['id'] ?>)"  class="excluir"> -->
-                        <a onclick="return confirm('Deseja realmente excluir o contato: <?= $item['nome'] ?>')" href="router.php?component=contatos&action=deletar&id=<?= $item['id'] ?>">
+                        <a onclick="return confirm('Deseja realmente excluir o contato: <?= $item['nome'] ?>')" href="router.php?component=contatos&action=deletar&id=<?= $item['id']?>&foto=<?= $foto?>">
                             <img src="img/trash.png" alt="Excluir" title="Excluir" class="excluir">
                         </a>
                         <img src="img/search.png" alt="Visualizar" title="Visualizar" class="pesquisar">
@@ -177,7 +176,8 @@ if (session_status()) {
                 </tr>
 
             <?php
-            }
+                }
+            }      
             ?>
 
         </table>

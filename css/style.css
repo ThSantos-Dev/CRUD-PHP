@@ -262,6 +262,10 @@ input[type=email]:hover{
 
 
 
+.campos.preview img{
+    width: 200px;
+    height: 150px;
 
-
-
+    padding: 30px;
+    object-fit: cover;
+}

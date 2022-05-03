@@ -33,7 +33,7 @@ function insertContato($dadosContato)
             celular,
             email,
             obs,
-            fotos
+            foto
         ) 
         values (
             '" . $dadosContato['nome'] . "',
@@ -41,7 +41,7 @@ function insertContato($dadosContato)
             '" . $dadosContato['celular'] . "',
             '" . $dadosContato['email'] . "',
             '" . $dadosContato['obs'] . "',
-            '" . $dadosContato['fotos'] ."'
+            '" . $dadosContato['foto'] ."'
         );";
 
     // echo '</br></br></br>Script SQL:</br>';
@@ -83,7 +83,8 @@ function updateContato($dadosContato)
             telefone     = '" . $dadosContato['telefone'] . "',
             celular      = '" . $dadosContato['celular']  . "',
             email        = '" . $dadosContato['email']    . "',
-            obs          = '" . $dadosContato['obs']      . "'
+            obs          = '" . $dadosContato['obs']      . "',
+            foto          = '" . $dadosContato['foto']    . "'
         where id_contato =  " . $dadosContato['id'];
 
     // Executa Script no BD
@@ -128,6 +129,7 @@ function deleteContato($id)
 // Função para realizar o LISTAR TODOS OS CANTATOS do BD
 function selectAllContatos()
 {
+    $arrayDados = array();
     // Abre a conexão com o BD
     $conexao = conexaoMySQL();
 
@@ -159,7 +161,7 @@ function selectAllContatos()
                 "celular"   => $rsDados['celular'],
                 "email"     => $rsDados['email'],
                 "obs"       => $rsDados['obs'],
-                "fotos"       => $rsDados['fotos'] 
+                "foto"       => $rsDados['foto'] 
             );
             $cont++;
         }
@@ -201,7 +203,8 @@ function selectByIdContato($id)
                 "telefone"  => $rsDados['telefone'],
                 "celular"   => $rsDados['celular'],
                 "email"     => $rsDados['email'],
-                "obs"       => $rsDados['obs']
+                "obs"       => $rsDados['obs'],
+                "foto"      => $rsDados['foto']
             );
         }
 
