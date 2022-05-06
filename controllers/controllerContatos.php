@@ -113,6 +113,9 @@ function atualizarContato($dadosContato, $arrayDados) {
     // Recebe o objeto de array referente a nova foto que poderá ser enviada no servidor
     $file   = $arrayDados['file']  ;
 
+    $newUpload = (bool) false;
+    
+
     // Validação para verificar se o objeto está vazio
     if(!empty($dadosContato)){
         // Validação de caixa vazia dos elementos Nome, Celular e Email, pois são obrigatórios no BD
@@ -121,6 +124,8 @@ function atualizarContato($dadosContato, $arrayDados) {
             if(!empty($id) && $id != 0 && is_numeric($id)) {
                 // Validação para identificar se será enviado ao servidor uma nova FOTO
                 if($file['fileFoto']['name'] != null) {
+                    $newUpload = true;
+
                     // Import da função de upload
                     require_once('modulo/upload.php');
     
@@ -134,7 +139,7 @@ function atualizarContato($dadosContato, $arrayDados) {
                 } else 
                     // Permanece a mesma foto no banco de dados
                     $newFileName = $idFoto;
-
+                
                 /*************************************************************************
                  * Criação do array de dados que será encaminhado a model para
                  * inserir no BD, é importante criar este array conforme
@@ -159,7 +164,8 @@ function atualizarContato($dadosContato, $arrayDados) {
 
                 // Chama a função que fará o insert no BD (essa função está na Model)
                 if(updateContato($arrayDados)){
-                    unlink(PATH_FILE_UPLOAD . $newFileName );
+                   if($newUpload)
+                       unlink(PATH_FILE_UPLOAD . $newFileName );
                     return true;
                 }
                 else 
