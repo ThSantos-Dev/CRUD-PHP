@@ -101,10 +101,9 @@ input[type=email]:hover{
     height: 50px;
     background-color: dodgerblue;
     color: white;
-    margin-top: 30px;
     font-size: 1.2em;
 }
-
+ 
 .enviar input:hover{
     background-color: rgb(2, 131, 45);
     cursor: pointer;
@@ -217,6 +216,7 @@ input[type=email]:hover{
 
 .destaque{
     font-weight: bold;
+    user-select: none;
 }
 
 /*Modal*/
@@ -266,6 +266,6 @@ input[type=email]:hover{
     width: 200px;
     height: 150px;
 
-    padding: 30px;
+    padding: 5px 20px;
     object-fit: cover;
 }

@@ -33,7 +33,8 @@ function insertContato($dadosContato)
             celular,
             email,
             obs,
-            foto
+            foto,
+            idEstado
         ) 
         values (
             '" . $dadosContato['nome'] . "',
@@ -41,7 +42,8 @@ function insertContato($dadosContato)
             '" . $dadosContato['celular'] . "',
             '" . $dadosContato['email'] . "',
             '" . $dadosContato['obs'] . "',
-            '" . $dadosContato['foto'] ."'
+            '" . $dadosContato['foto'] ."',
+            '" . $dadosContato['idEstado'] ."'
         );";
 
     // echo '</br></br></br>Script SQL:</br>';
@@ -84,7 +86,9 @@ function updateContato($dadosContato)
             celular      = '" . $dadosContato['celular']  . "',
             email        = '" . $dadosContato['email']    . "',
             obs          = '" . $dadosContato['obs']      . "',
-            foto          = '" . $dadosContato['foto']    . "'
+            foto          = '" . $dadosContato['foto']    . "',
+            idEstado          = '" . $dadosContato['idEstado'] . "'
+
         where id_contato =  " . $dadosContato['id'];
 
     // Executa Script no BD
@@ -152,7 +156,11 @@ function selectAllContatos()
          * vai gerenciar a quantidade de itens no array
          */
         $cont = 0;
+
+        require_once('estado.php');
         while ($rsDados = mysqli_fetch_assoc($result)) {
+            $estado = selectByIdEstado($rsDados['idEstado']);
+
             // Cria um array com dados do BD
             $arrayDados[$cont] = array(
                 "id"        => $rsDados['id_contato'],
@@ -161,15 +169,25 @@ function selectAllContatos()
                 "celular"   => $rsDados['celular'],
                 "email"     => $rsDados['email'],
                 "obs"       => $rsDados['obs'],
-                "foto"       => $rsDados['foto'] 
+                "foto"      => $rsDados['foto'],
+                "estado"    => $estado
             );
             $cont++;
         }
 
+        // echo '<pre>';
+        // var_dump($arrayDados);
+        // echo '</pre>';
+
+        // die;
+
         // Solicita o fechamento da conexão com o BD
         fecharConexaoMySQL($conexao);
 
-        return $arrayDados;
+        if(isset($arrayDados))
+            return $arrayDados;
+        else 
+            return false;
     }
 }
 
@@ -204,7 +222,8 @@ function selectByIdContato($id)
                 "celular"   => $rsDados['celular'],
                 "email"     => $rsDados['email'],
                 "obs"       => $rsDados['obs'],
-                "foto"      => $rsDados['foto']
+                "foto"      => $rsDados['foto'],
+                "idEstado"    => $rsDados['idEstado']
             );
         }
 

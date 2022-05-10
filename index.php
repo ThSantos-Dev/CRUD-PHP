@@ -23,6 +23,7 @@ if (session_status()) {
         $email       = $_SESSION['dadosContato']['email'];
         $obs         = $_SESSION['dadosContato']['obs'];
         $foto        = $_SESSION['dadosContato']['foto'];
+        $idEstado    = $_SESSION['dadosContato']['idEstado'];
 
         // Mudamos a ação do form para editar o registro no click do botão salvar
         $form = 'router.php?component=contatos&action=editar&id=' . $id . '&foto=' . $foto ;
@@ -68,6 +69,28 @@ if (session_status()) {
                     </div>
                     <div class="cadastroEntradaDeDados">
                         <input type="text" name="txtNome" value="<?= isset($nome) ? $nome : null  ?>" placeholder="Digite seu Nome" maxlength="100" required>
+                    </div>
+                </div>
+
+                <div class="campos">
+                    <div class="cadastroInformacoesPessoais">
+                        <label> Estado: </label>
+                    </div>
+                    <div class="cadastroEntradaDeDados">
+                        <select name="sltEstado" id="">
+                            <option value="">SELECIONE UM ESTADO</option>
+                            <?php
+                                require_once('controllers/controllerEstados.php');
+
+                                $listEstados = listaEstado();
+                                
+                                foreach($listEstados as $item) {
+                            ?>
+                                <option value="<?= $item['id']?>" <?= $item['id'] == $idEstado ? 'selected' : null?>><?= $item['nome']?></option>
+                            <?php
+                                }
+                            ?>
+                        </select>
                     </div>
                 </div>
 
@@ -137,6 +160,7 @@ if (session_status()) {
                 <td class="tblColunas destaque"> Nome </td>
                 <td class="tblColunas destaque"> Celular </td>
                 <td class="tblColunas destaque"> Email </td>
+                <td class="tblColunas destaque"> Estado </td>
                 <td class="tblColunas destaque"> Foto </td>
                 <td class="tblColunas destaque"> Opções </td>
             </tr>
@@ -145,8 +169,6 @@ if (session_status()) {
             //    Import do arquivo da controller para solicitar a listagem dos dados
             require_once('controllers/controllerContatos.php');
             require_once('modulo/config.php');
-            // Chama a função que vai retornar os dados de contatos 
-            $listContato = listaContato();
 
             //    Estrutura de repetição para retornar os dados do array e printar na tela
             if($listContato = listaContato()) {
@@ -158,6 +180,7 @@ if (session_status()) {
                     <td class="tblColunas registros"><?= $item['nome'] ?></td>
                     <td class="tblColunas registros"><?= $item['telefone'] ?></td>
                     <td class="tblColunas registros"><?= $item['email'] ?></td>
+                    <td class="tblColunas registros"><?= $item['estado']['nome'] ?></td>
                     <td class="tblColunas registros">
                         <img src="<?=PATH_FILE_UPLOAD.$foto?>" alt="" class="tblImagens">
                     </td>

@@ -97,7 +97,8 @@ function selectByIdContato($id)
                 "telefone" => $resultDados['telefone'],
                 "celular"  => $resultDados['celular'],
                 "email"    => $resultDados['email'],
-                "obs"      => $resultDados['obs']
+                "obs"      => $resultDados['obs'],
+                "idEstado" => $resultDados['idEstado']
             );
         }
 

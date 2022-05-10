@@ -9,14 +9,17 @@
  * Versão: 1.0
  */
 
+// Import do arquivo de configuração do projeto
+require_once('modulo/config.php');
+
 //  Função para receber dados da VIEW e encaminhar dados para a MODEL (inserir)
 function inserirContato($dadosContato, $file) {
     $fileName = (string) 'img/user.png';
 
     // Validação para verificar se o objeto está vazio
     if(!empty($dadosContato)){
-        // Validação de caixa vazia dos elementos Nome, Celular e Email, pois são obrigatórios no BD
-        if(!empty($dadosContato['txtNome']) && !empty($dadosContato['txtCelular']) && !empty($dadosContato['txtEmail'])){
+        // Validação de caixa vazia dos elementos Nome, Celular e Email e Estado, pois são obrigatórios no BD
+        if(!empty($dadosContato['txtNome']) && !empty($dadosContato['txtCelular']) && !empty($dadosContato['txtEmail']) && !empty($dadosContato['sltEstado'])){
             // Validação para identificar se chegou um arquivo para upload
             if($file['fileFoto']['name'] != null) {
                 // Import da função de upload
@@ -47,7 +50,8 @@ function inserirContato($dadosContato, $file) {
                 "telefone"  => $dadosContato['txtTelefone'],
                 "email"     => $dadosContato['txtEmail'],
                 "obs"       => $dadosContato['txtObs'],
-                "foto"      => $fileName
+                "foto"      => $fileName,
+                "idEstado"  => $dadosContato['sltEstado']
             );
 
             // Import do arquivo de modelagem para manipular o BD
@@ -106,13 +110,14 @@ function excluirContato($arrayDados) {
 function atualizarContato($dadosContato, $arrayDados) {
     // Recebe o ID enviado pelo $arrayDados
     $id     = $arrayDados['id'];
-    
+
     // Recebe o nome da foto enviada pelo arraydados (nome da foto que já existe no BD)
     $idFoto = $arrayDados['idFoto'];
 
     // Recebe o objeto de array referente a nova foto que poderá ser enviada no servidor
     $file   = $arrayDados['file']  ;
 
+    // Variável para sabermos se é para apagar a imagem do servidor ou não
     $newUpload = (bool) false;
     
 
@@ -124,6 +129,8 @@ function atualizarContato($dadosContato, $arrayDados) {
             if(!empty($id) && $id != 0 && is_numeric($id)) {
                 // Validação para identificar se será enviado ao servidor uma nova FOTO
                 if($file['fileFoto']['name'] != null) {
+                    // Atualizando a variável, indicando que há um novo upload, ou seja
+                    // a imagem antiga deve ser apagada da pasta do servidor
                     $newUpload = true;
 
                     // Import da função de upload
@@ -155,16 +162,19 @@ function atualizarContato($dadosContato, $arrayDados) {
                     "telefone"  => $dadosContato['txtTelefone'],
                     "email"     => $dadosContato['txtEmail'],
                     "obs"       => $dadosContato['txtObs'],
-                    "foto"      => $newFileName
+                    "foto"      => $newFileName,
+                    "idEstado"  => $dadosContato['sltEstado']
                 );
 
                 // Import do arquivo de modelagem para manipular o BD
                 require_once('models/bd/contato.php');
-                require_once('modulo/config.php');
 
                 // Chama a função que fará o insert no BD (essa função está na Model)
                 if(updateContato($arrayDados)){
+                    // Verificando se será necessário apagar a foto antiga
+                    // Esta variável foi ativada em 'true' na linha 130, quando realizamos o upload de uma nova foto para o servidor
                    if($newUpload)
+                        // Apaga a foto antiga da pasta do servidor
                        unlink(PATH_FILE_UPLOAD . $newFileName );
                     return true;
                 }
