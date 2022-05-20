@@ -10,7 +10,7 @@
 
 // Import do Arquivo que estabelece a conexão com o BD
 require_once('conexaoMySQL.php');
-require_once('modulo/config.php');
+require_once(SRC.'modulo/config.php');
 
 
 // CRUD = CREATE, READ, UPDATE AND DELETE 

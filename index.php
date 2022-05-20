@@ -80,7 +80,7 @@ if (session_status()) {
                         <select name="sltEstado" id="">
                             <option value="">SELECIONE UM ESTADO</option>
                             <?php
-                                require_once('controllers/controllerEstados.php');
+                                require_once(SRC . 'controllers/controllerEstados.php');
 
                                 $listEstados = listaEstado();
                                 
