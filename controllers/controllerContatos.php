@@ -75,22 +75,24 @@ function excluirContato($arrayDados) {
     $id = $arrayDados['id'];
 
     // Recebe o nome da foto que será excluída da pasta do servidor
-    $idFoto = $arrayDados['idFoto'];
+    $idFoto = isset($arrayDados['idFoto']) ? $arrayDados['idFoto'] : null;
 
     // Validação para verificar se o $id contém um número VÁLIDO.
     if($id != 0 && !empty($id) && is_numeric($id)){
         // Import do arquivo de modelagem para manipular o BD.
-        require_once('models/bd/contato.php');
-        require_once('modulo/config.php');
+        require_once(SRC . 'models/bd/contato.php');
+        // require_once('modulo/config.php');
 
         // Chama a função da models e valida se o retorno foi true ou false
         if(deleteContato($id)){
             // Validação que verifica se a variável Foto tem conteúdo
-            if($foto != null) {
+            if($idFoto != null) {
                 // unlink() - função para apagar um arquivo de um diretório
                 // Permimte apagar a foto fisicamente do diretório do servidor
-                if(unlink(PATH_FILE_UPLOAD . $idFoto))
-                    return true;
+                if(file_exists(SRC . PATH_FILE_UPLOAD . $idFoto)){
+                    if(unlink(SRC . PATH_FILE_UPLOAD . $idFoto))
+                        return true;
+                }
                 else
                     return array('idErro'   => 5,
                                 'message'  => 'O contato foi excluido do banco de dados. Porém a imagem não pode ser excluída.');

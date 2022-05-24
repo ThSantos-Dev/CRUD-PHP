@@ -10,7 +10,6 @@
 
 // Import do Arquivo que estabelece a conexão com o BD
 require_once('conexaoMySQL.php');
-require_once(SRC.'modulo/config.php');
 
 
 // CRUD = CREATE, READ, UPDATE AND DELETE 
@@ -198,7 +197,7 @@ function selectByIdContato($id)
     $conexao = conexaoMySQL();
 
     // script para buscar um Contato do dados do BD
-    $sql = "select * from tbl_contatos where id_contato = ".$id;
+    $sql = "select tbl_contatos.*, tblEstados.nome as nomeEstado, tblEstados.sigla, tblEstados.idEstado from tbl_contatos inner join tblEstados on tbl_contatos.idEstado = tblEstados.idEstado where id_contato =" . $id;
     $result = mysqli_query($conexao, $sql);
 
     // Valida se o BD retornou registros
@@ -223,14 +222,22 @@ function selectByIdContato($id)
                 "email"     => $rsDados['email'],
                 "obs"       => $rsDados['obs'],
                 "foto"      => $rsDados['foto'],
-                "idEstado"    => $rsDados['idEstado']
+                "estado"    => array(
+                    "idEstado"    => $rsDados['idEstado'],
+                    "sigla"       => $rsDados['sigla'],
+                    "nome"        => $rsDados['nomeEstado']
+                )
             );
         }
 
         // Solicita o fechamento da conexão com o BD
         fecharConexaoMySQL($conexao);
-
-        return $arrayDados;
+        
+        // Validação para verificar se h[a dados a serem retornados
+        if(isset($arrayDados))
+            return $arrayDados;
+        else 
+            return false;
     }
 }
 
