@@ -134,32 +134,83 @@ $app->delete('/contatos/{id}', function ($request, $response, $args) {
     }
 });
 
-
 // EndPoiint: Requisição que envia dados para Criar contato
 $app->post('/contatos', function($request, $response, $args){
-        // Import da controller de contatos, que fará a busca de dados
-        require_once('../modulo/config.php');
-        require_once('../controllers/controllerContatos.php');
+    // Recebe do header da requisição qual será o content-type
+    $contentTypeHeader = $request->getHeaderLine('Content-Type');
 
-        $body = $request->getParsedBody();
+    // Cria um array, pois dependendo do content-type temos mais informações separadas pela ';'
+    // $contentTypeHeader = explode(";", $request->getHeaderLine('Content-Type') )[0];
+    $contentType = explode(";", $contentTypeHeader);
 
-        var_dump($body);
-        die;
+    switch ($contentType[0]) {
+        case 'multipart/form-data':
+
+            // Convertendo o corpo da requisição e transfromando em um Array - Sem a imagem
+            // Recebe os dados enviados dados comuns enviados pelo corpo da requisição
+            $dadosBody = $request->getParsedBody();
+
+            // Recebe uma imagem enviada pelo corpo da requisição
+            $uploadFiles = $request->getUploadedFiles();
+
+            // Cria um array com todos os dados que chegaram pela requisição,
+            // Devido aos dados serem protected (protegidos) - criamos um array
+            // e recuperamos os dados pelos métodos do objeto
+            $arrayFoto = array(
+                "name"      => $uploadFiles['foto']->getClientFileName(),
+                "type"      => $uploadFiles['foto']->getClientMediaType(),
+                "size"      => $uploadFiles['foto']->getSize(),
+                "tmp_name"  => $uploadFiles['foto']->file
+
+            );
+
+
+            // Cria uma chave 'foto' para colocar todos os dados do  obejto conforme é esperado na controller
+            $file = array("foto" => $arrayFoto);
+
+            // Cria um array com todos os dados comuns e do arquivo que será enviado para o servidor
+            $arrayDados = array(
+                $dadosBody,
+                "file" => $file
+            );
+
+            // Import da controller de contatos, que fará a busca de dados
+            require_once('../modulo/config.php');
+            require_once('../controllers/controllerContatos.php');
+
+            // Chama a função da controller para inserir os dados
+            $resposta = inserirContato($arrayDados);
+
+            if(is_bool($resposta) && $resposta == true) {
+                return $response->write('{ "message": "Registro inserido com sucesso."}')
+                                ->withHeader('Content-Type', 'application/json')
+                                ->withStatus(201);
+
+            } elseif(is_array($resposta) && isset($resposta['idErro'])) {
+                // Realiza a conversão do array de dados em formato JSON
+                $dadosJSON = createJSON($resposta);
+
+                // Retorna um erro que significa que o cliente passou dados errados
+                return $response->write('{"message": "Houve um problema no processo de inserir.", "Erro": '. $dadosJSON .'}')
+                                ->withHeader('Content-Type', 'application/json')
+                                ->withStatus(400);
+            }
+            break;
+
+        case 'application/json':
+            return $response->write('{ "message": "O formato selecionado foi: JSON."}')
+                            ->withHeader('Content-Type', 'application/json')
+                            ->withStatus(200);
+            break;
+        default:
+        return $response->write('{ "message": "O formato do Content-Type não é válido para essa requisição."}')
+                        ->withHeader('Content-Type', 'application/json')
+                        ->withStatus(400);
+            break;
+    }
+
 });
 
-$app->get('/estados', function ($request, $response, $args) {
-    // Import da controller de contatos, que fará a busca de dados
-    require_once('../modulo/config.php');
-    require_once('../controllers/controllerEstados.php');
-
-    $dados = listaEstado();
-    $dataJSON = json_encode($dados);
-
-    $response->getBody()->write($dataJSON);
-    return $response
-        ->withHeader('Content-Type', 'application/json')
-        ->withStatus(204);
-});
 
 
 

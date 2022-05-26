@@ -11,7 +11,7 @@
 function uploadFile($arrayFile)
 {
     // Import do arquivo de configurações do projeto
-    require_once('modulo/config.php');
+    require_once(SRC.'modulo/config.php');
 
     // Variável criada para preservação do conteudo de $arrayFile
     $arquivo = $arrayFile;
@@ -62,7 +62,7 @@ function uploadFile($arrayFile)
                 $foto = $nomeCriptografado . "." . $extensao;
 
                 // Envia o arquivo da pasta temporária do Apache para a pasta criada no Projeto
-                if (move_uploaded_file($tempFile, PATH_FILE_UPLOAD . $foto)) {
+                if (move_uploaded_file($tempFile, SRC.PATH_FILE_UPLOAD . $foto)) {
                     return $foto;
                 } else {
                     return array(

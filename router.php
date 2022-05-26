@@ -31,11 +31,22 @@
 
                 // Validação para identificar o tipo de ação que será realizada
                 if($action == 'INSERIR'){
+                    // Validação para tratar se a imagem existe na chegada dos dados do HTML
                     if(isset($_FILES) && !empty($_FILES)) {
+                        $arrayDados = array(
+                            $_POST,
+                            "file" => $_FILES
+                        );
+
                         // Chama a função de inserir na controller
-                        $resposta = inserirContato($_POST, $_FILES);
+                        $resposta = inserirContato($arrayDados);
                     }   else {
-                        $resposta = inserirContato($_POST, null);
+                        $arrayDados = array(
+                            $_POST,
+                            "file" => null
+                        );
+
+                        $resposta = inserirContato($arrayDados);
                     }
 
                     // Valida o tipo de daos que a controller retornou
